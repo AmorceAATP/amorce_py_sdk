@@ -120,10 +120,11 @@ class IdentityManager:
         self._public_key = self._private_key.public_key()
 
     @staticmethod
-    def generate() -> 'IdentityManager':
+    def generate_ephemeral() -> 'IdentityManager':
         """
         Factory method: Generates a new ephemeral Ed25519 identity in memory.
-        Ideal for testing, QA, and temporary agents.
+        Returns a self-contained IdentityManager instance ready for consumption.
+        This satisfies the 'Zero Knowledge' QA requirement.
         """
         # Generate a new keypair using cryptography
         new_key = ed25519.Ed25519PrivateKey.generate()
