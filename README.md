@@ -15,6 +15,8 @@ The Nexus SDK allows any Python application, API, or Agent to become a verified 
 -   **Resilience**: Automatic retry logic with exponential backoff for unstable networks (handles 503, 429).
     
 -   **Developer Experience (v0.1.6)**: Simplified `IdentityManager` with auto-derived Agent IDs.
+
+-   **Robust Error Handling**: Specific exceptions (`NexusNetworkError`, `NexusAPIError`) for reliable production code.
     
 
 ## 📦 Installation
@@ -116,9 +118,32 @@ try:
     else:
         print(f"⚠️ Server Error: {response}")
 
+except NexusNetworkError as e:
+    print(f"❌ Network Error (Retryable): {e}")
+except NexusAPIError as e:
+    print(f"❌ API Error {e.status_code}: {e.response_body}")
 except Exception as e:
-    print(f"❌ Network or Protocol Error: {str(e)}")
+    print(f"❌ Unexpected Error: {e}")
 
+```
+
+### 3. Error Handling
+
+The SDK provides specific exceptions for robust error handling:
+
+```python
+from nexus import NexusClient, NexusConfigError, NexusNetworkError, NexusAPIError
+
+try:
+    client.transact(...)
+except NexusConfigError as e:
+    print(f"Configuration Error: {e}")
+except NexusNetworkError as e:
+    print(f"Network Error: {e}") # Retry might be possible
+except NexusAPIError as e:
+    print(f"API Error {e.status_code}: {e.response_body}")
+except Exception as e:
+    print(f"Unexpected Error: {e}")
 ```
 
 ## 🛡️ Architecture & Security
