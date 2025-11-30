@@ -1,7 +1,7 @@
 # Amorce SDK Core
-# Version 0.1.7
+# Version 0.2.0
 
-__version__ = "0.1.7"
+__version__ = "0.2.0"
 
 # Task 1: Crypto & Identity
 from .crypto import IdentityManager, LocalFileProvider, EnvVarProvider, GoogleSecretManagerProvider
@@ -12,6 +12,7 @@ from .envelope import AmorceEnvelope, AmorceEnvelope as Envelope, PriorityLevel
 
 # Task 3: Client
 from .client import AmorceClient
+from .core.async_client import AsyncAmorceClient
 
 # Task 4: Exceptions
 from .exceptions import (
@@ -26,6 +27,7 @@ from .exceptions import (
 # Flattening exports as requested by QA Ticket
 __all__ = [
     "AmorceClient",
+    "AsyncAmorceClient",
     "AmorceEnvelope",
     "Envelope",
     "PriorityLevel",

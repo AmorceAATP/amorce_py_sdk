@@ -1,9 +1,14 @@
-#Core dependencies for the Nexus SDK
+# Core dependencies for the Amorce SDK
 
 cryptography>=43.0.0
 pydantic>=2.0.0
 requests>=2.31.0
 
-#Optional: For Google Secret Manager support (Prod mode)
+# Async HTTP/2 support
+httpx>=0.25.0
 
+# Advanced retry logic with exponential backoff
+tenacity>=8.0.0
+
+# Optional: For Google Secret Manager support (Prod mode)
 google-cloud-secret-manager>=2.16.0

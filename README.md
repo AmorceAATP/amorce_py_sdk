@@ -12,9 +12,13 @@ The Amorce SDK allows any Python application, API, or Agent to become a verified
     
 -   **Priority Lane**: Mark critical messages (`high`, `critical`) to bypass network congestion.
     
--   **Resilience**: Automatic retry logic with exponential backoff for unstable networks (handles 503, 429).
+-   **HTTP/2 Support (v0.2.0)**: Optional `AsyncAmorceClient` with multiplexed connections for high-throughput agents.
     
--   **Developer Experience (v0.1.6)**: Simplified `IdentityManager` with auto-derived Agent IDs.
+-   **Exponential Backoff (v0.2.0)**: Advanced retry logic with jitter using tenacity (handles 503, 429, 504).
+
+-   **Resilience**: Automatic retry logic for unstable networks with exponential backoff.
+    
+-   **Developer Experience**: Simplified `IdentityManager` with auto-derived Agent IDs.
 
 -   **Robust Error Handling**: Specific exceptions (`AmorceNetworkError`, `AmorceAPIError`) for reliable production code.
     
@@ -124,6 +128,58 @@ except AmorceAPIError as e:
     print(f"❌ API Error {e.status_code}: {e.response_body}")
 except Exception as e:
     print(f"❌ Unexpected Error: {e}")
+
+```
+
+## ⚡ Async Quick Start (High-Throughput Agents)
+
+**NEW in v0.2.0:** For AI agents handling concurrent transactions, use `AsyncAmorceClient` with HTTP/2:
+
+```python
+import asyncio
+from amorce import AsyncAmorceClient, IdentityManager, PriorityLevel
+
+async def main():
+    identity = IdentityManager.generate_ephemeral()
+    
+    # Use as AsyncContextManager for proper resource cleanup
+    async with AsyncAmorceClient(
+        identity=identity,
+        directory_url="https://directory.amorce.io",
+        orchestrator_url="https://api.amorce.io"
+    ) as client:
+        payload = {
+            "intent": "book_reservation",
+            "params": {"date": "2025-12-15", "guests": 2}
+        }
+        
+        response = await client.transact(
+            service_contract={"service_id": "srv_restaurant_01"},
+            payload=payload,
+            priority=PriorityLevel.HIGH
+        )
+        
+        if response.is_success:
+            print(f"✅ Transaction: {response.transaction_id}")
+            print(f"Data: {response.result.data}")
+
+asyncio.run(main())
+```
+
+**Why Async?**
+- **HTTP/2 Multiplexing**: Handle 100s of concurrent transactions over a single connection
+- **Exponential Backoff**: Advanced retry logic with jitter prevents thundering herd
+- **Non-Blocking**: Perfect for AI agents that need to transact at high throughput
+
+### Migrating from Sync to Async
+
+| Sync Client (`AmorceClient`) | Async Client (`AsyncAmorceClient`) |
+|------------------------------|-------------------------------------|
+| `client = AmorceClient(...)` | `async with AsyncAmorceClient(...) as client:` |
+| `client.transact(...)` | `await client.transact(...)` |
+| HTTP/1.1 via `requests` | HTTP/2 via `httpx` |
+| Basic retry (urllib3) | Exponential backoff + jitter (tenacity) |
+| Blocking I/O | Non-blocking async I/O |
 
 ```
 

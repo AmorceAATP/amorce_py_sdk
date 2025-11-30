@@ -1,31 +1,39 @@
 """
-Amorce Exceptions Module
-Defines custom exceptions for the Amorce SDK to allow fine-grained error handling.
+Amorce Exception Hierarchy (Task 4)
+Provides specific exception types for different failure modes.
 """
 
+from typing import Optional
+
+
 class AmorceError(Exception):
-    """Base class for all Amorce SDK exceptions."""
+    """Base exception for all Amorce SDK errors."""
     pass
+
 
 class AmorceConfigError(AmorceError):
-    """Raised when there is a configuration issue (e.g. invalid URL, missing key)."""
+    """Raised when configuration is invalid (e.g., missing URLs, bad keys)."""
     pass
+
 
 class AmorceNetworkError(AmorceError):
-    """Raised when a network operation fails (e.g. connection timeout, DNS error)."""
+    """Raised for network-level errors (DNS, connection, timeouts)."""
     pass
 
+
 class AmorceAPIError(AmorceError):
-    """Raised when the Amorce API returns an error response (4xx, 5xx)."""
-    def __init__(self, message: str, status_code: int = None, response_body: str = None):
+    """Raised for API-level errors (4xx, 5xx responses from orchestrator/directory)."""
+    def __init__(self, message: str, status_code: Optional[int] = None, response_body: Optional[str] = None):
         super().__init__(message)
         self.status_code = status_code
         self.response_body = response_body
 
+
 class AmorceSecurityError(AmorceError):
-    """Raised when a security-related operation fails (e.g. signing, key loading)."""
+    """Raised for cryptographic or signature verification failures."""
     pass
 
+
 class AmorceValidationError(AmorceError):
-    """Raised when data validation fails (e.g. invalid envelope structure)."""
+    """Raised when data validation fails (e.g., invalid NATP version, malformed envelope)."""
     pass

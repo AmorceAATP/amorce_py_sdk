@@ -62,7 +62,7 @@ The Amorce SDK allows any Python application, API, or Agent to become a verified
 ### Install via PyPI
 
 ```
-pip install nexus-py-sdk
+pip install amorce-sdk
 
 ```
 
@@ -77,7 +77,7 @@ An Agent is defined by its **Private Key**. Never share this key.
 Generate a new identity in memory instantly. Perfect for QA scripts or temporary bots.
 
 ```
-from nexus import IdentityManager
+from amorce import IdentityManager
 
 # Generates a fresh Ed25519 keypair in memory (Ephemeral)
 identity = IdentityManager.generate_ephemeral()
@@ -94,13 +94,13 @@ Load your identity from a secure source or environment variable.
 
 ```
 import os
-from nexus import IdentityManager, LocalFileProvider
+from amorce import IdentityManager, LocalFileProvider
 
 # Load from a local PEM file
 identity = IdentityManager(LocalFileProvider("agent_key.pem"))
 
 # OR (Recommended) Load private key content from Environment Variable
-# identity = IdentityManager.from_env("NEXUS_PRIVATE_KEY")
+# identity = IdentityManager.from_env("AMORCE_PRIVATE_KEY")
 
 ```
 
@@ -110,11 +110,11 @@ Use the `AmorceClient` to discover services and execute transactions.
 
 ```
 import os
-from nexus import AmorceClient, PriorityLevel
+from amorce import AmorceClient, PriorityLevel
 
 # Configuration (Use Env Vars in Prod!)
-DIRECTORY_URL = os.getenv("NEXUS_DIRECTORY_URL", "[https://directory.amorce.io](https://directory.amorce.io)")
-ORCHESTRATOR_URL = os.getenv("NEXUS_ORCHESTRATOR_URL", "[https://api.amorce.io](https://api.amorce.io)")
+DIRECTORY_URL = os.getenv("AMORCE_DIRECTORY_URL", "[https://directory.amorce.io](https://directory.amorce.io)")
+ORCHESTRATOR_URL = os.getenv("AMORCE_ORCHESTRATOR_URL", "[https://api.amorce.io](https://api.amorce.io)")
 
 # 1. Initialize the client
 # Note: 'agent_id' is automatically derived from the identity object.
@@ -161,7 +161,7 @@ except Exception as e:
 The SDK provides specific exceptions for robust error handling:
 
 ```python
-from nexus import AmorceClient, AmorceConfigError, AmorceNetworkError, AmorceAPIError
+from amorce import AmorceClient, AmorceConfigError, AmorceNetworkError, AmorceAPIError
 
 try:
     client.transact(...)
@@ -204,8 +204,8 @@ To contribute to the SDK:
 
 ```
 # Clone and install in editable mode
-git clone [https://github.com/trebortGolin/nexus_py_sdk.git](https://github.com/trebortGolin/nexus_py_sdk.git)
-cd nexus_py_sdk
+git clone [https://github.com/trebortGolin/amorce_py_sdk.git](https://github.com/trebortGolin/amorce_py_sdk.git)
+cd amorce_py_sdk
 pip install -e .
 
 # Run Unit Tests
