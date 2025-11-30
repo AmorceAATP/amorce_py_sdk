@@ -1,6 +1,6 @@
 """
-Nexus Client Module
-High-level HTTP client for the Nexus Agent Transaction Protocol (NATP).
+Amorce Client Module
+High-level HTTP client for the Amorce Agent Transaction Protocol (AATP).
 Encapsulates envelope creation, signing, and transport.
 """
 
@@ -13,13 +13,13 @@ from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 
 from .crypto import IdentityManager
-from .envelope import NexusEnvelope, SenderInfo, SettlementInfo, PriorityLevel
-from .exceptions import NexusConfigError, NexusNetworkError, NexusAPIError
+from .envelope import AmorceEnvelope, SenderInfo, SettlementInfo, PriorityLevel
+from .exceptions import AmorceConfigError, AmorceNetworkError, AmorceAPIError
 
 logger = logging.getLogger("nexus.client")
 
 
-class NexusClient:
+class AmorceClient:
     """
     The main entry point for developers.
     Manages identity, discovery, and transactions.
@@ -37,11 +37,11 @@ class NexusClient:
         self.identity = identity
         
         if not directory_url.startswith(("http://", "https://")):
-             raise NexusConfigError(f"Invalid directory_url: {directory_url}")
+             raise AmorceConfigError(f"Invalid directory_url: {directory_url}")
         self.directory_url = directory_url.rstrip('/')
 
         if not orchestrator_url.startswith(("http://", "https://")):
-             raise NexusConfigError(f"Invalid orchestrator_url: {orchestrator_url}")
+             raise AmorceConfigError(f"Invalid orchestrator_url: {orchestrator_url}")
         self.orchestrator_url = orchestrator_url.rstrip('/')
         
         self.api_key = api_key
@@ -70,7 +70,7 @@ class NexusClient:
             # FIX CRITIQUE L1: L'Orchestrateur attend X-API-Key, pas X-ATP-Key.
             self.session.headers.update({"X-API-Key": self.api_key})
 
-    def _create_envelope(self, payload: Dict[str, Any], priority: str = PriorityLevel.NORMAL) -> NexusEnvelope:
+    def _create_envelope(self, payload: Dict[str, Any], priority: str = PriorityLevel.NORMAL) -> AmorceEnvelope:
         """
         Legacy Helper: Maintained for internal consistency if needed,
         but transact() now uses flat payload construction.
@@ -82,7 +82,7 @@ class NexusClient:
         )
 
         # 2. Create Envelope
-        envelope = NexusEnvelope(
+        envelope = AmorceEnvelope(
             priority=priority,
             sender=sender,
             payload=payload
@@ -105,11 +105,11 @@ class NexusClient:
             return resp.json()
         except requests.exceptions.RequestException as e:
             if e.response is not None:
-                 raise NexusAPIError(f"Discovery API error: {e}", status_code=e.response.status_code, response_body=e.response.text)
-            raise NexusNetworkError(f"Discovery network error: {e}")
+                 raise AmorceAPIError(f"Discovery API error: {e}", status_code=e.response.status_code, response_body=e.response.text)
+            raise AmorceNetworkError(f"Discovery network error: {e}")
         except Exception as e:
             logger.error(f"Discovery failed: {e}")
-            raise NexusNetworkError(f"Discovery failed: {e}")
+            raise AmorceNetworkError(f"Discovery failed: {e}")
 
     def transact(self, service_contract: Dict[str, Any], payload: Dict[str, Any],
                  priority: str = PriorityLevel.NORMAL) -> Optional[Dict[str, Any]]:
@@ -156,14 +156,14 @@ class NexusClient:
 
             if resp.status_code != 200:
                 logger.error(f"Transaction Error {resp.status_code}: {resp.text}")
-                raise NexusAPIError(f"Transaction failed with status {resp.status_code}", status_code=resp.status_code, response_body=resp.text)
+                raise AmorceAPIError(f"Transaction failed with status {resp.status_code}", status_code=resp.status_code, response_body=resp.text)
 
             return resp.json()
 
         except requests.exceptions.RequestException as e:
-             raise NexusNetworkError(f"Transaction network error: {e}")
-        except NexusAPIError:
+             raise AmorceNetworkError(f"Transaction network error: {e}")
+        except AmorceAPIError:
              raise
         except Exception as e:
             logger.error(f"Transaction failed after retries: {e}")
-            raise NexusNetworkError(f"Transaction failed: {e}")
+            raise AmorceNetworkError(f"Transaction failed: {e}")

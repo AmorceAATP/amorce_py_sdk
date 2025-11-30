@@ -6,9 +6,9 @@ from pydantic import ValidationError
 # Ajout du chemin racine pour importer le SDK localement
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from nexus.envelope import NexusEnvelope, SenderInfo
-from nexus.client import NexusClient
-from nexus.crypto import IdentityManager, IdentityProvider
+from amorce.envelope import NexusEnvelope, SenderInfo
+from amorce.client import NexusClient
+from amorce.crypto import IdentityManager, IdentityProvider
 from cryptography.hazmat.primitives.asymmetric import ed25519
 
 

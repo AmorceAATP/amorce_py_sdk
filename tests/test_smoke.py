@@ -10,14 +10,14 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')
 try:
     # TEST IMPORT (CRITICAL v0.1.6)
     # Check that export aliases are working correctly
-    from nexus import (
+    from amorce import (
         IdentityManager,
-        NexusClient,
-        Envelope,  # Alias for NexusEnvelope
-        NexusEnvelope,  # Original Name
+        AmorceClient,
+        Envelope,  # Alias for AmorceEnvelope
+        AmorceEnvelope,  # Original Name
         PriorityLevel
     )
-    print("✅ [IMPORT] Nexus modules loaded successfully.")
+    print("✅ [IMPORT] Amorce modules loaded successfully.")
 except ImportError as e:
     print(f"❌ [IMPORT] Critical failure: {e}")
     sys.exit(1)
@@ -59,7 +59,7 @@ class TestSmokeV016(unittest.TestCase):
         identity = IdentityManager.generate_ephemeral()
 
         # 1. "Clean" Instantiation (Without explicit agent_id)
-        client = NexusClient(
+        client = AmorceClient(
             identity=identity,
             directory_url="http://mock-dir",
             orchestrator_url="http://mock-orch"
@@ -68,14 +68,14 @@ class TestSmokeV016(unittest.TestCase):
         # 2. Did the client find the ID by itself?
         print(f"Client Agent ID: {client.agent_id}")
         self.assertEqual(client.agent_id, identity.agent_id)
-        print("✅ [PASS] NexusClient retrieved Agent ID from identity.")
+        print("✅ [PASS] AmorceClient retrieved Agent ID from identity.")
 
     def test_03_envelope_alias_and_priority(self):
         """Verifies that Envelope alias works and priority is passed."""
         print("\n--- Test 3: Envelope & Priority ---")
 
         identity = IdentityManager.generate_ephemeral()
-        client = NexusClient(identity, "http://d", "http://o")
+        client = AmorceClient(identity, "http://d", "http://o")
 
         payload = {"test": "v0.1.6"}
 
@@ -84,7 +84,7 @@ class TestSmokeV016(unittest.TestCase):
         envelope = client._create_envelope(payload, priority=PriorityLevel.CRITICAL)
 
         # Type Verification (Alias vs Class)
-        self.assertIsInstance(envelope, NexusEnvelope)
+        self.assertIsInstance(envelope, AmorceEnvelope)
         self.assertIsInstance(envelope, Envelope)  # The alias must work for isinstance
 
         # Field Verification

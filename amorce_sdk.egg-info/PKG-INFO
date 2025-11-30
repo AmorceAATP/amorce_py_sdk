@@ -1,3 +1,32 @@
+Metadata-Version: 2.4
+Name: amorce-sdk
+Version: 2.0.0
+Summary: Official Python SDK for the Amorce Agent Transaction Protocol (AATP)
+Home-page: https://github.com/trebortGolin/amorce_py_sdk
+Author: Athena Architecture
+Author-email: dev@amorce.io
+Classifier: Programming Language :: Python :: 3
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: OS Independent
+Classifier: Intended Audience :: Developers
+Classifier: Topic :: Software Development :: Libraries :: Python Modules
+Requires-Python: >=3.9
+Description-Content-Type: text/markdown
+Requires-Dist: requests>=2.31.0
+Requires-Dist: cryptography>=41.0.0
+Requires-Dist: pydantic>=2.0.0
+Requires-Dist: google-cloud-secret-manager>=2.16.0
+Requires-Dist: firebase-admin>=6.2.0
+Dynamic: author
+Dynamic: author-email
+Dynamic: classifier
+Dynamic: description
+Dynamic: description-content-type
+Dynamic: home-page
+Dynamic: requires-dist
+Dynamic: requires-python
+Dynamic: summary
+
 # Amorce Python SDK (AATP)
 
 **Official Python SDK for the Amorce Agent Transaction Protocol (AATP).**

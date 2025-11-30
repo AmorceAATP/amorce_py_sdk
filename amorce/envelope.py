@@ -1,6 +1,6 @@
 """
-Nexus Envelope Module (Task 2)
-Defines the strict NATP v0.1 data structure using Pydantic.
+Amorce Envelope Module (Task 2)
+Defines the strict AATP v0.1 data structure using Pydantic.
 Handles canonical serialization and signing.
 """
 
@@ -11,7 +11,7 @@ from typing import Optional, Dict, Any
 from pydantic import BaseModel, Field, field_validator
 
 from .crypto import IdentityManager
-from .exceptions import NexusValidationError
+from .exceptions import AmorceValidationError
 
 # --- Constants ---
 class PriorityLevel:
@@ -20,7 +20,7 @@ class PriorityLevel:
     HIGH = "high"
     CRITICAL = "critical"
 
-# --- NATP Data Models ---
+# --- AATP Data Models ---
 
 class SenderInfo(BaseModel):
     """Identifies the sender of the message."""
@@ -35,9 +35,9 @@ class SettlementInfo(BaseModel):
     facilitation_fee: float = Field(0.0, description="Fee for the platform/facilitator.")
 
 
-class NexusEnvelope(BaseModel):
+class AmorceEnvelope(BaseModel):
     """
-    The root NATP v0.1 Envelope.
+    The root AATP v0.1 Envelope.
     All transactions MUST use this structure.
     """
     natp_version: str = Field("0.1.0", description="Protocol version.")
@@ -63,7 +63,7 @@ class NexusEnvelope(BaseModel):
     @classmethod
     def check_version(cls, v: str) -> str:
         if v != "0.1.0":
-            raise NexusValidationError("Unsupported NATP version. Expected 0.1.0")
+            raise AmorceValidationError("Unsupported AATP version. Expected 0.1.0")
         return v
 
     def get_canonical_json(self) -> bytes:
@@ -107,4 +107,4 @@ class NexusEnvelope(BaseModel):
         )
 
 # DX ALIAS: Required for legacy imports looking for 'Envelope' directly in this module
-Envelope = NexusEnvelope
+Envelope = AmorceEnvelope

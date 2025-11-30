@@ -1,31 +1,31 @@
 """
-Nexus Exceptions Module
-Defines custom exceptions for the Nexus SDK to allow fine-grained error handling.
+Amorce Exceptions Module
+Defines custom exceptions for the Amorce SDK to allow fine-grained error handling.
 """
 
-class NexusError(Exception):
-    """Base class for all Nexus SDK exceptions."""
+class AmorceError(Exception):
+    """Base class for all Amorce SDK exceptions."""
     pass
 
-class NexusConfigError(NexusError):
+class AmorceConfigError(AmorceError):
     """Raised when there is a configuration issue (e.g. invalid URL, missing key)."""
     pass
 
-class NexusNetworkError(NexusError):
+class AmorceNetworkError(AmorceError):
     """Raised when a network operation fails (e.g. connection timeout, DNS error)."""
     pass
 
-class NexusAPIError(NexusError):
-    """Raised when the Nexus API returns an error response (4xx, 5xx)."""
+class AmorceAPIError(AmorceError):
+    """Raised when the Amorce API returns an error response (4xx, 5xx)."""
     def __init__(self, message: str, status_code: int = None, response_body: str = None):
         super().__init__(message)
         self.status_code = status_code
         self.response_body = response_body
 
-class NexusSecurityError(NexusError):
+class AmorceSecurityError(AmorceError):
     """Raised when a security-related operation fails (e.g. signing, key loading)."""
     pass
 
-class NexusValidationError(NexusError):
+class AmorceValidationError(AmorceError):
     """Raised when data validation fails (e.g. invalid envelope structure)."""
     pass

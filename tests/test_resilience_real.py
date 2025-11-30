@@ -7,8 +7,8 @@ from http.server import HTTPServer, BaseHTTPRequestHandler
 # Ajout du chemin racine
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from nexus.client import NexusClient
-from nexus.crypto import IdentityManager, IdentityProvider
+from amorce.client import NexusClient
+from amorce.crypto import IdentityManager, IdentityProvider
 from cryptography.hazmat.primitives.asymmetric import ed25519
 
 

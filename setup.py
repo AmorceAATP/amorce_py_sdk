@@ -3,17 +3,17 @@ from pathlib import Path
 
 # Read README for the long description on PyPI
 this_directory = Path(__file__).parent
-long_description = (this_directory / "README.md").read_text() if (this_directory / "README.md").exists() else "Official Nexus Protocol SDK"
+long_description = (this_directory / "README.md").read_text() if (this_directory / "README.md").exists() else "Official Amorce Protocol SDK"
 
 setup(
-    name="nexus-py-sdk",
-    version="0.1.7",  # BUMP: 0.1.6 -> 0.1.7 (Security & Error Handling Improvements)
-    description="Official Python SDK for the Nexus Agent Transaction Protocol (NATP)",
+    name="amorce-sdk",
+    version="2.0.0",  # BREAKING: Rebrand from nexus to amorce
+    description="Official Python SDK for the Amorce Agent Transaction Protocol (AATP)",
     long_description=long_description,
     long_description_content_type='text/markdown',
     author="Athena Architecture",
     author_email="dev@amorce.io",
-    url="https://github.com/trebortGolin/nexus_py_sdk",
+    url="https://github.com/trebortGolin/amorce_py_sdk",
     packages=find_packages(),
     python_requires=">=3.9",
     install_requires=[

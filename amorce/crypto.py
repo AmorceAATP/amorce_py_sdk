@@ -1,5 +1,5 @@
 """
-Nexus Core Crypto Module (Task 1)
+Amorce Core Crypto Module (Task 1)
 Handles identity management (Ed25519 keys) and cryptographic primitives.
 """
 
@@ -15,7 +15,7 @@ from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric import ed25519
 from cryptography.exceptions import InvalidSignature
 
-from .exceptions import NexusSecurityError
+from .exceptions import AmorceSecurityError
 
 # Configure logging
 logger = logging.getLogger("nexus.crypto")
@@ -43,11 +43,11 @@ class LocalFileProvider(IdentityProvider):
                     password=None
                 )
             if not isinstance(private_key, ed25519.Ed25519PrivateKey):
-                raise NexusSecurityError("Key is not an Ed25519 private key.")
+                raise AmorceSecurityError("Key is not an Ed25519 private key.")
             return private_key
         except Exception as e:
             logger.error(f"Failed to load local key from {self.filepath}: {e}")
-            raise NexusSecurityError(f"Failed to load local key from {self.filepath}: {e}")
+            raise AmorceSecurityError(f"Failed to load local key from {self.filepath}: {e}")
 
 
 class EnvVarProvider(IdentityProvider):
@@ -59,7 +59,7 @@ class EnvVarProvider(IdentityProvider):
     def get_private_key(self) -> ed25519.Ed25519PrivateKey:
         pem_data = os.environ.get(self.env_var_name)
         if not pem_data:
-            raise NexusSecurityError(f"Environment variable {self.env_var_name} is not set.")
+            raise AmorceSecurityError(f"Environment variable {self.env_var_name} is not set.")
 
         # Handle cases where newlines are escaped (common in some CI/CD)
         pem_data = pem_data.replace("\\n", "\n")
@@ -72,7 +72,7 @@ class EnvVarProvider(IdentityProvider):
             return private_key
         except Exception as e:
             logger.error(f"Failed to load key from environment variable: {e}")
-            raise NexusSecurityError(f"Failed to load key from environment variable: {e}")
+            raise AmorceSecurityError(f"Failed to load key from environment variable: {e}")
 
 
 class GoogleSecretManagerProvider(IdentityProvider):
@@ -99,10 +99,10 @@ class GoogleSecretManagerProvider(IdentityProvider):
             return private_key
         except ImportError:
             logger.error("google-cloud-secret-manager not installed.")
-            raise NexusSecurityError("google-cloud-secret-manager not installed.")
+            raise AmorceSecurityError("google-cloud-secret-manager not installed.")
         except Exception as e:
             logger.error(f"Failed to load key from Secret Manager: {e}")
-            raise NexusSecurityError(f"Failed to load key from Secret Manager: {e}")
+            raise AmorceSecurityError(f"Failed to load key from Secret Manager: {e}")
 
 # --- Internal Provider for In-Memory Keys ---
 class InMemoryProvider(IdentityProvider):
@@ -197,7 +197,8 @@ class IdentityManager:
             logger.warning(f"Signature verification failed: {e}")
             return False
 
-    def get_canonical_json_bytes(self, payload: dict) -> bytes:
+    @staticmethod
+    def get_canonical_json_bytes(payload: dict) -> bytes:
         """
         Returns the canonical JSON byte representation for signing.
         Strict: sort_keys=True, no whitespace.
