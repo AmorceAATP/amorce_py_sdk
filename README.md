@@ -5,8 +5,7 @@
 
 **The Standard for Secure AI Agent Transactions**
 
-Protect your AI Agent's API with cryptographic verification. The Amorce SDK handles Ed25519 signatures, zero-trust identity, and transaction validation—so you can focus on building.
-
+Amorce is the Trust Layer for the Agent Economy. We provide the infrastructure to turn any Python API into a verifiable, secure AI Agent in minutes.
 ---
 
 ## 🚀 Quick Start
