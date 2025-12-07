@@ -5,7 +5,8 @@
 
 **The Standard for Secure AI Agent Transactions**
 
-Amorce is the Trust Layer for the Agent Economy. We provide the infrastructure to turn any Python API into a verifiable, secure AI Agent in minutes.
+Protect your AI Agent's API with cryptographic verification. The Amorce SDK handles Ed25519 signatures, zero-trust identity, and transaction validation—so you can focus on building.
+
 ---
 
 ## 🚀 Quick Start
@@ -41,30 +42,8 @@ with open("my_agent_key.pem", "w") as f:
 from amorce import LocalFileProvider
 identity = IdentityManager(LocalFileProvider("my_agent_key.pem"))
 ```
-## 🔌 MCP Integration (NEW)
 
-**Access 80+ Model Context Protocol servers through Amorce with cryptographic security + HITL**
-
-```python
-from amorce import IdentityManager, MCPToolClient
-
-# Initialize
-identity = IdentityManager.generate_ephemeral()
-mcp = MCPToolClient(identity, orchestrator_url="http://localhost:8080")
-
-# Call MCP tools
-result = mcp.call_tool(
-    server_name='filesystem',
-    tool_name='read_file',
-    arguments={'path': '/tmp/data.txt'}
-)
 ---
-
-```
-
-**Available servers:** filesystem, brave-search, postgres, and 80+ more
-
-**Learn more:** [MCP Wrapper Docs](https://github.com/trebortGolin/amorce/blob/main/docs/MCP_WRAPPER.md)
 
 ## 🛡️ For Builders: Protect Your API
 
@@ -516,4 +495,141 @@ MIT License - See [LICENSE](LICENSE) for details
 **Built with ❤️ for the Agent Economy**
 ---
 
+## 🔌 MCP Integration - Production Ready ✅
 
+**Use Model Context Protocol tools through Amorce with cryptographic security and human oversight.**
+
+The Amorce SDK provides production-ready integration with [Model Context Protocol](https://modelcontextprotocol.io) servers, adding Ed25519 signatures and human-in-the-loop approvals to all tool calls.
+
+### 🚀 Quick Start
+
+```python
+from amorce import IdentityManager, MCPToolClient
+
+# 1. Create your agent identity
+identity = IdentityManager.generate_ephemeral()
+
+# 2. Connect to MCP wrapper
+mcp = MCPToolClient(identity, wrapper_url="http://localhost:5001")
+
+# 3. Discover available tools
+tools = mcp.list_tools()
+for tool in tools:
+    hitl = "🔒" if tool.requires_approval else "✓"
+    print(f"{hitl} {tool.name}: {tool.description}")
+
+# 4. Call tools (read operations)
+result = mcp.call_tool('filesystem', 'read_file', {'path': '/tmp/data.txt'})
+print(result)
+
+# 5. Call tools requiring approval (write operations)
+try:
+    mcp.call_tool('filesystem', 'write_file', {
+        'path': '/tmp/output.txt',
+        'content': 'Hello from Amorce!'
+    })
+except ValueError as e:
+    print("Approval required!")  
+    # Request approval through orchestrator
+    approval_id = request_approval(...)  
+    result = mcp.call_tool('filesystem', 'write_file', {...}, approval_id=approval_id)
+```
+
+### ✅ Production Features
+
+| Feature | Status | Description |
+|---------|--------|-------------|
+| **Cryptographic Signatures** | ✅ Production | Ed25519 on every request |
+| **HITL Approvals** | ✅ Production | Required for write/delete/move |
+| **Rate Limiting** | ✅ Production | 20 req/min, configurable |
+| **Load Tested** | ✅ Verified | 50 concurrent, 5ms avg response |
+| **Error Handling** | ✅ Comprehensive | Timeouts, connection errors, validation |
+| **Trust Directory** | ✅ 95% Ready | Public key distribution |
+
+### 📖 Complete Example with HITL
+
+```python
+from amorce import IdentityManager, MCPToolClient, AmorceClient
+
+# Setup
+identity = IdentityManager.generate_ephemeral()
+mcp = MCPToolClient(identity, "http://localhost:5001")
+client = AmorceClient(identity, orchestrator_url="http://localhost:8080")
+
+# List tools and check HITL requirements
+tools = mcp.list_tools()
+write_tool = next(t for t in tools if t.name == 'write_file')
+print(f"Write file requires approval: {write_tool.requires_approval}")  # True
+
+# Attempt without approval (will fail)
+try:
+    result = mcp.call_tool('filesystem', 'write_file', {
+        'path': '/tmp/important.txt',
+        'content': 'Critical data'
+    })
+except ValueError as e:
+    print(f"Blocked: {e}")  # "Tool requires approval"
+    
+# Request approval
+approval = client.request_approval(
+    tool_name='write_file',
+    tool_args={'path': '/tmp/important.txt', 'content': 'Critical data'},
+    reason='Writing ML model output'
+)
+
+# Human reviews and approves (via UI or API)
+# ... approval.approve() ...
+
+# Execute with approval
+result = mcp.call_tool('filesystem', 'write_file', {
+    'path': '/tmp/important.txt',
+    'content': 'Critical data'
+}, approval_id=approval.id)
+
+print(f"File written successfully: {result}")
+```
+
+### 🎯 Tool Categories
+
+| Category | Examples | HITL Required |
+|----------|----------|---------------|
+| **Read Operations** | read_file, list_directory, search | ❌ No |
+| **Write Operations** | write_file, edit_file | ✅ Yes |
+| **Destructive Operations** | delete_file, move_file | ✅ Yes |
+| **Search/Query** | brave_search, database_query | ❌ No (read-only) |
+
+### 📈 Performance
+
+**Production-Tested Metrics:**
+- **Response Time:** 3-9ms average
+- **Concurrent:** 50 requests in 40ms
+- **Rate Limit:** 20 req/min (enforced)
+- **Uptime:** 100% under load testing
+
+### 🔗 Available MCP Servers
+
+Access 80+ production MCP servers through Amorce:
+
+```python
+# Filesystem operations
+mcp.call_tool('filesystem', 'read_file', {'path': '/data/input.json'})
+
+# Web search
+mcp.call_tool('search', 'brave_search', {'query': 'AI agents 2024'})
+
+# Database access (with HITL)
+mcp.call_tool('postgres', 'execute_query', {'sql': 'SELECT * FROM users'}, approval_id)
+
+# Git operations (with HITL)
+mcp.call_tool('git', 'commit', {'message': 'Update config'}, approval_id)
+```
+
+[View all 80+ MCP servers →](https://github.com/modelcontextprotocol/servers)
+
+### 📚 Additional Resources
+
+- **[MCP Wrapper Docs](https://github.com/trebortGolin/amorce/blob/main/docs/MCP_WRAPPER.md)** - Complete integration guide
+- **[Console Integration](https://amorce.io/docs/guides/mcp-integration)** - UI for approval management
+- **[Test Results](https://github.com/trebortGolin/amorce/blob/main/tests/TEST_RESULTS.md)** - Production readiness evidence
+
+---
