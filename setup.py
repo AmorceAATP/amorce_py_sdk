@@ -13,7 +13,7 @@ setup(
     long_description_content_type='text/markdown',
     author="Athena Architecture",
     author_email="dev@amorce.io",
-    url="https://github.com/trebortGolin/amorce_py_sdk",
+    url="https://github.com/AmorceAATP/amorce_py_sdk",
     packages=find_packages(exclude=["tests*"]),
     python_requires=">=3.9",
     install_requires=[
